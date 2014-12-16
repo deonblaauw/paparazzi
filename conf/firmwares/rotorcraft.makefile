@@ -82,6 +82,7 @@ $(TARGET).srcs += $(SRC_FIRMWARE)/stabilization/stabilization_none.c
 $(TARGET).srcs += $(SRC_FIRMWARE)/stabilization/stabilization_rate.c
 
 $(TARGET).srcs += $(SRC_FIRMWARE)/guidance/guidance_h.c
+$(TARGET).srcs += $(SRC_FIRMWARE)/guidance/guidance_hybrid.c
 $(TARGET).srcs += $(SRC_FIRMWARE)/guidance/guidance_h_ref.c
 $(TARGET).srcs += $(SRC_FIRMWARE)/guidance/guidance_v.c
 $(TARGET).srcs += $(SRC_FIRMWARE)/guidance/guidance_v_ref.c

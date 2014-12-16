@@ -39,6 +39,8 @@
 /* for guidance_v_thrust_coeff */
 #include "firmwares/rotorcraft/guidance/guidance_v.h"
 
+#include "firmwares/rotorcraft/guidance/guidance_hybrid.h"
+
 #include "state.h"
 
 #ifndef GUIDANCE_H_AGAIN
@@ -184,6 +186,10 @@ void guidance_h_init(void) {
 
   gh_ref_init();
 
+#if HYBRID_NAVIGATION
+  guidance_hybrid_init();
+#endif
+
 #if PERIODIC_TELEMETRY
   register_periodic_telemetry(DefaultPeriodic, "GUIDANCE_H_INT", send_gh);
   register_periodic_telemetry(DefaultPeriodic, "HOVER_LOOP", send_hover_loop);
@@ -210,6 +216,10 @@ void guidance_h_mode_changed(uint8_t new_mode) {
      transition_percentage = 0;
      transition_theta_offset = 0;
    }
+
+#if HYBRID_NAVIGATION
+   guidance_hybrid_norm_ref_airspeed = 0;
+#endif
 
   switch (new_mode) {
     case GUIDANCE_H_MODE_RC_DIRECT:
@@ -359,8 +369,18 @@ void guidance_h_run(bool_t  in_flight) {
          */
         sp_cmd_i.psi = stateGetNedToBodyEulers_i()->psi;
         stabilization_attitude_set_rpy_setpoint_i(&sp_cmd_i);
+
+#if HYBRID_NAVIGATION
+        //make sure the heading is right before leaving horizontal_mode attiude
+        guidance_hybrid_reset_heading(&sp_cmd_i);
+#endif
       }
       else {
+
+#if HYBRID_NAVIGATION
+        INT32_VECT2_NED_OF_ENU(guidance_h_pos_sp, navigation_target);
+        guidance_hybrid_run();
+#else
         INT32_VECT2_NED_OF_ENU(guidance_h_pos_sp, navigation_carrot);
 
         guidance_h_update_reference();
@@ -373,6 +393,7 @@ void guidance_h_run(bool_t  in_flight) {
         /* set final attitude setpoint */
         stabilization_attitude_set_earth_cmd_i(&guidance_h_cmd_earth,
                                                guidance_h_heading_sp);
+#endif
       }
       stabilization_attitude_run(in_flight);
       break;
