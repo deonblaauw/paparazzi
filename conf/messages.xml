@@ -1905,7 +1905,17 @@
     <field name="msg" type="char[]"/>
   </message>
 
-  <!--216 is free -->
+  <message name="STAB_ATTITUDE_INDI" id="216">
+    <field name="ang_acc_p" type="float"/>
+    <field name="ang_acc_q" type="float"/>
+    <field name="ang_acc_r" type="float"/>
+    <field name="ang_acc_ref_p" type="float"/>
+    <field name="ang_acc_ref_q" type="float"/>
+    <field name="ang_acc_ref_r" type="float"/>
+    <field name="inv_eff_p" type="float"/>
+    <field name="inv_eff_q" type="float"/>
+    <field name="inv_eff_r" type="float"/>
+  </message>
   <!--217 is free -->
 
   <message name="BEBOP_ACTUATORS" id="218">

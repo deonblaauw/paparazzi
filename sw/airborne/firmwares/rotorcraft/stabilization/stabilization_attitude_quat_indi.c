@@ -35,6 +35,7 @@
 #include "subsystems/imu.h"
 #include "subsystems/actuators/motor_mixing.h"
 #include "firmwares/rotorcraft/guidance/guidance_h.h"
+#include "subsystems/radio_control.h"
 
 // dummy gains for systems expecting attitude gains
 struct Int32AttitudeGains stabilization_gains = {
@@ -70,6 +71,9 @@ struct FloatRates udot = {0., 0., 0.};
 struct FloatRates udotdot = {0., 0., 0.};
 struct FloatRates filt_rate = {0., 0., 0.};
 
+float eff[3] = {0.05, 0.05, 0.02};
+float inv_eff_disp[3] = {14, 14, 100};
+
 #define IERROR_SCALE 1024
 #define GAIN_PRESCALER_FF 48
 #define GAIN_PRESCALER_P 48
@@ -89,9 +93,9 @@ struct FloatRates filt_rate = {0., 0., 0.};
 #if PERIODIC_TELEMETRY
 #include "subsystems/datalink/telemetry.h"
 
-static void send_ahrs_ref_quat(void) {
+static void send_ahrs_ref_quat(struct transport_tx *trans, struct link_device *dev) {
   struct Int32Quat* quat = stateGetNedToBodyQuat_i();
-  DOWNLINK_SEND_AHRS_REF_QUAT(DefaultChannel, DefaultDevice,
+  pprz_msg_send_AHRS_REF_QUAT(trans, dev, AC_ID,
       &stab_att_ref_quat.qi,
       &stab_att_ref_quat.qx,
       &stab_att_ref_quat.qy,
@@ -102,17 +106,17 @@ static void send_ahrs_ref_quat(void) {
       &(quat->qz));
 }
 
-static void send_att_indi(void) {
-  DOWNLINK_SEND_STAB_ATTITUDE_INDI(DefaultChannel, DefaultDevice,
+static void send_att_indi(struct transport_tx *trans, struct link_device *dev) {
+  pprz_msg_send_STAB_ATTITUDE_INDI(trans, dev, AC_ID,
                                    &filtered_rate_deriv.p,
                                    &filtered_rate_deriv.q,
                                    &filtered_rate_deriv.r,
                                    &angular_accel_ref.p,
                                    &angular_accel_ref.q,
                                    &angular_accel_ref.r,
-                                   &indi_u.p,
-                                   &indi_u.q,
-                                   &indi_u.r);
+                                   &inv_eff_disp[0],
+                                   &inv_eff_disp[1],
+                                   &inv_eff_disp[2]);
 }
 #endif
 
@@ -220,6 +224,9 @@ static void attitude_run_indi(int32_t indi_commands[], struct Int32Quat *att_err
     FLOAT_RATES_ZERO(udot);
     FLOAT_RATES_ZERO(udotdot);
   }
+  else {
+    lms_estimation();
+  }
 
   //Save error for displaying purposes
   att_err_x = QUAT1_FLOAT_OF_BFP(att_err->qx);
@@ -228,6 +235,23 @@ static void attitude_run_indi(int32_t indi_commands[], struct Int32Quat *att_err
   indi_commands[COMMAND_ROLL] = u_in.p;
   indi_commands[COMMAND_PITCH] = u_in.q;
   indi_commands[COMMAND_YAW] = u_in.r;
+}
+
+static void attitude_run_fb(int32_t fb_commands[], struct Int32AttitudeGains *gains, struct Int32Quat *att_err,
+    struct Int32Rates *rate_err) {
+  /*  PID feedback */
+  fb_commands[COMMAND_ROLL] =
+    GAIN_PRESCALER_P * gains->p.x  * QUAT1_FLOAT_OF_BFP(att_err->qx) / 4 +
+    GAIN_PRESCALER_D * gains->d.x  * RATE_FLOAT_OF_BFP(rate_err->p) / 16;
+
+  fb_commands[COMMAND_PITCH] =
+    GAIN_PRESCALER_P * gains->p.y  * QUAT1_FLOAT_OF_BFP(att_err->qy) / 4 +
+    GAIN_PRESCALER_D * gains->d.y  * RATE_FLOAT_OF_BFP(rate_err->q)  / 16;
+
+  fb_commands[COMMAND_YAW] =
+    GAIN_PRESCALER_P * gains->p.z  * QUAT1_FLOAT_OF_BFP(att_err->qz) / 4 +
+    GAIN_PRESCALER_D * gains->d.z  * RATE_FLOAT_OF_BFP(rate_err->r)  / 16;
+
 }
 
 void stabilization_attitude_run(bool_t enable_integrator) {
@@ -242,13 +266,24 @@ void stabilization_attitude_run(bool_t enable_integrator) {
   /* attitude error                          */
   struct Int32Quat att_err;
   struct Int32Quat* att_quat = stateGetNedToBodyQuat_i();
-  INT32_QUAT_INV_COMP(att_err, *att_quat, stab_att_sp_quat);
+  INT32_QUAT_INV_COMP(att_err, *att_quat, stab_att_ref_quat);
   /* wrap it in the shortest direction       */
-  INT32_QUAT_WRAP_SHORTEST(att_err);
-  INT32_QUAT_NORMALIZE(att_err);
+  int32_quat_wrap_shortest(&att_err);
+  int32_quat_normalize(&att_err);
 
-  /* compute the INDI command */
-  attitude_run_indi(stabilization_att_indi_cmd, &att_err);
+  if(radio_control.values[5] > 0) {
+    /* compute the INDI command */
+    attitude_run_indi(stabilization_att_indi_cmd, &att_err);
+  }
+  else {
+    struct Int32Rates rate_err;
+    struct Int32Rates* body_rate = stateGetBodyRates_i();
+    rate_err.p = - body_rate->p;
+    rate_err.q = - body_rate->q;
+    rate_err.r = - body_rate->r;
+    /* compute the feed back command */
+    attitude_run_fb(stabilization_att_indi_cmd, &stabilization_gains, &att_err, &rate_err);
+  }
 
   stabilization_cmd[COMMAND_ROLL] = stabilization_att_indi_cmd[COMMAND_ROLL];
   stabilization_cmd[COMMAND_PITCH] = stabilization_att_indi_cmd[COMMAND_PITCH];
@@ -305,3 +340,26 @@ void stabilization_indi_filter_inputs(void) {
   udotdot.r = -udot.r * 2*STABILIZATION_INDI_FILT_ZETA_R*STABILIZATION_INDI_FILT_OMEGA_R + (u_act_dyn.r - indi_u.r)*STABILIZATION_INDI_FILT_OMEGA2_R;
 }
 
+void lms_estimation(void) {
+  //Estimation per axis
+  float du_axis[3] = {udot.p, udot.q, udot.r};
+  float dx_axis[3] = {filtered_rate_2deriv.p, filtered_rate_2deriv.q, filtered_rate_2deriv.r};
+  float lambda_axis[3] = {1/3000.0, 1/3000.0, 0.3/3000.0};
+
+    for(int8_t i=0; i<3; i++) {
+      if((abs(dx_axis[i]) > 50.0) && (abs(du_axis[i]) > 300.0)) {
+        eff[i] = eff[i] - (eff[i]*du_axis[i] - dx_axis[i])/du_axis[i]*lambda_axis[i];
+      }
+    }
+
+    inv_eff_disp[0] = 1.0/eff[0];
+    inv_eff_disp[1] = 1.0/eff[1];
+    inv_eff_disp[2] = 1.0/eff[2];
+
+#if ADAPTIVE_INDI
+    inv_control_effectiveness.p = 1.0/eff[0];
+    inv_control_effectiveness.q = 1.0/eff[1];
+    inv_control_effectiveness.r = 1.0/eff[2];
+#endif
+
+}

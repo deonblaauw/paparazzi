@@ -51,6 +51,7 @@ extern struct FloatRates udotdot;
 
 void stabilization_indi_filter_gyro(void);
 void stabilization_indi_filter_inputs(void);
+void lms_estimation(void);
 
 #endif /* STABILIZATION_ATTITUDE_QUAT_INT_H */
 
