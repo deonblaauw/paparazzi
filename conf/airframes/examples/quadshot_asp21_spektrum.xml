@@ -49,8 +49,8 @@
     <let var="forward_right" value="aileron_gain*$aileron_feedback_right+elevator_gain*$elevator_feedback_right"/>-->
 
 <!--     if using PID with gain scheduling -->
-    <let var="forward_left"  value="15*$aileron_feedback_left"/>
-    <let var="forward_right" value="15*$aileron_feedback_right"/>
+    <let var="forward_left"  value="15*$aileron_feedback_left + 8*$elevator_feedback_left"/>
+    <let var="forward_right" value="15*$aileron_feedback_right + 8*$elevator_feedback_right"/>
 
     <!-- This statement tells the autopilot to use the hover feedback if in mode attitude direct and to use the forward feedback in all other cases-->
     <set servo="ELEVON_LEFT"    value="AP_MODE == AP_MODE_ATTITUDE_DIRECT ? $hover_left  : $forward_left" />
@@ -143,8 +143,8 @@
     <define name="PHI_I" value="{30, 30}"/>
     <define name="PHI_DD" value="{0, 0}"/>
 
-    <define name="THETA_P" value="{100, 80}"/>
-    <define name="THETA_D" value="{100, 90}"/>
+    <define name="THETA_P" value="{100, 100}"/>
+    <define name="THETA_D" value="{100, 100}"/>
     <define name="THETA_I" value="{40, 40}"/>
     <define name="THETA_DD" value="{0, 0}"/>
 
@@ -319,7 +319,7 @@
     </load>-->
 
   <!-- Load this module to use multiple gain sets, which have to be specified in the gain sets section -->
-    <load name="gain_scheduling.xml"/>
+<!--     <load name="gain_scheduling.xml"/> -->
   </modules>
 
   <firmware name="rotorcraft">
@@ -353,8 +353,8 @@
 <!--    <subsystem name="telemetry"     type="transparent"/>-->
     <subsystem name="imu"           type="aspirin_v2.1"/>
     <subsystem name="gps"           type="ublox"/>
-    <subsystem name="stabilization" type="int_quat"/>
-<!--     <subsystem name="stabilization" type="indi"/> -->
+<!--     <subsystem name="stabilization" type="int_quat"/> -->
+    <subsystem name="stabilization" type="indi"/>
 
     <subsystem name="ahrs"          type="int_cmpl_quat">
       <configure name="USE_MAGNETOMETER" value="1"/>

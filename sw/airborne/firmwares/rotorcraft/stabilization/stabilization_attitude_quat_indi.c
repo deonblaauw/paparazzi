@@ -111,9 +111,9 @@ static void send_att_indi(struct transport_tx *trans, struct link_device *dev) {
                                    &filtered_rate_deriv.p,
                                    &filtered_rate_deriv.q,
                                    &filtered_rate_deriv.r,
-                                   &angular_accel_ref.p,
-                                   &angular_accel_ref.q,
-                                   &angular_accel_ref.r,
+                                   &inv_control_effectiveness.p,
+                                   &inv_control_effectiveness.q,
+                                   &inv_control_effectiveness.r,
                                    &inv_eff_disp[0],
                                    &inv_eff_disp[1],
                                    &inv_eff_disp[2]);
