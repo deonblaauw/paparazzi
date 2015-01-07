@@ -49,6 +49,9 @@ extern struct FloatRates u_in;
 extern struct FloatRates udot;
 extern struct FloatRates udotdot;
 
+extern bool_t adaptive_indi;
+extern float lambda_inv;
+
 void stabilization_indi_filter_gyro(void);
 void stabilization_indi_filter_inputs(void);
 void lms_estimation(void);

@@ -73,6 +73,7 @@ struct FloatRates filt_rate = {0., 0., 0.};
 
 float eff[3] = {0.05, 0.05, 0.02};
 float inv_eff_disp[3] = {14, 14, 100};
+float lambda_inv = 3000.0;
 
 #define IERROR_SCALE 1024
 #define GAIN_PRESCALER_FF 48
@@ -89,6 +90,11 @@ float inv_eff_disp[3] = {14, 14, 100};
 
 #define STABILIZATION_INDI_FILT_OMEGA2_R (STABILIZATION_INDI_FILT_OMEGA_R*STABILIZATION_INDI_FILT_OMEGA_R)
 
+#if ADAPTIVE_INDI
+bool_t adaptive_indi = true;
+#else
+bool_t adaptive_indi = false;
+#endif
 
 #if PERIODIC_TELEMETRY
 #include "subsystems/datalink/telemetry.h"
@@ -344,7 +350,7 @@ void lms_estimation(void) {
   //Estimation per axis
   float du_axis[3] = {udot.p, udot.q, udot.r};
   float dx_axis[3] = {filtered_rate_2deriv.p, filtered_rate_2deriv.q, filtered_rate_2deriv.r};
-  float lambda_axis[3] = {1/3000.0, 1/3000.0, 0.3/3000.0};
+  float lambda_axis[3] = {1.0/lambda_inv, 1.0/lambda_inv, 0.3/lambda_inv};
 
     for(int8_t i=0; i<3; i++) {
       if((abs(dx_axis[i]) > 50.0) && (abs(du_axis[i]) > 300.0)) {
@@ -356,10 +362,15 @@ void lms_estimation(void) {
     inv_eff_disp[1] = 1.0/eff[1];
     inv_eff_disp[2] = 1.0/eff[2];
 
-#if ADAPTIVE_INDI
-    inv_control_effectiveness.p = 1.0/eff[0];
-    inv_control_effectiveness.q = 1.0/eff[1];
-    inv_control_effectiveness.r = 1.0/eff[2];
-#endif
+    if(adaptive_indi) {
+      inv_control_effectiveness.p = 1.0/eff[0];
+      inv_control_effectiveness.q = 1.0/eff[1];
+      inv_control_effectiveness.r = 1.0/eff[2];
+    }
+    else {
+      inv_control_effectiveness.p = STABILIZATION_INDI_CONTROL_EFFECTIVENESS_P;
+      inv_control_effectiveness.q = STABILIZATION_INDI_CONTROL_EFFECTIVENESS_Q;
+      inv_control_effectiveness.r = STABILIZATION_INDI_CONTROL_EFFECTIVENESS_R;
+    }
 
 }
