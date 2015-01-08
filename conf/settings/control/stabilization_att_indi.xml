@@ -12,7 +12,7 @@
       <dl_setting var="reference_acceleration.rate_r" min="0" step="0.1" max="100" module="stabilization/stabilization_attitude_quat_indi" shortname="kd_r"/>
       <dl_setting var="inv_control_effectiveness.r" min="0" step="1" max="500" module="stabilization/stabilization_attitude_quat_indi" shortname="ctl_eff_r"/>
       <dl_setting var="adaptive_indi" min="0" step="1" max="1" module="stabilization/stabilization_attitude_quat_indi" shortname="adaptive" values="FALSE|TRUE" param="ADAPTIVE_INDI"/>
-      <dl_setting var="lambda_inv" min="1" step="1000" max="1000000" module="stabilization/stabilization_attitude_quat_indi" shortname="lambda_inv"/>
+      <dl_setting var="lambda_inv" min="1" step="1000" max="10000" module="stabilization/stabilization_attitude_quat_indi" shortname="lambda_inv"/>
     </dl_settings>
   </dl_settings>
 </settings>
