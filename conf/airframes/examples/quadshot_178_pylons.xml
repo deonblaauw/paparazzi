@@ -1,7 +1,7 @@
 <!-- this is a quadshot vehicle equiped with Lisa/m2.0 and an aspirin 2.1
      More information on the Quadshot can be found at transition-robotics.com -->
 
-<airframe name="quadshot aspirin 2.1 spektrum">
+<airframe name="quadshot 178 pylons">
 
   <servos driver="Pwm">
     <servo name="A1" no="0" min="1000" neutral="1100" max="2000"/>
@@ -64,10 +64,10 @@
     <define name="TRIM_YAW" value="0"/>
     <define name="NB_MOTOR" value="4"/>
     <define name="SCALE" value="256"/>
-    <define name="PITCH_COEF"  value="{ -256, -256,  256,  256 }"/>
-    <define name="ROLL_COEF"   value="{  256, -256,  256, -256 }"/>
-    <define name="YAW_COEF"    value="{ -256,  256,  128, -128 }"/>
-    <define name="THRUST_COEF" value="{  256,  256,  256,  256 }"/>
+    <define name="PITCH_COEF"  value="{-256, -256,  256,  256 }"/>
+    <define name="ROLL_COEF"   value="{ 256, -256,  109, -109 }"/>
+    <define name="YAW_COEF"    value="{ 256, -256, -109,  109 }"/>
+    <define name="THRUST_COEF" value="{ 256,  256,  256,  256 }"/>
 <!--    <define name="PITCH_COEF"  value="{ 0, 0, 0, 0 }"/>
     <define name="ROLL_COEF"   value="{ 0, 0, 0, 0 }"/>
     <define name="YAW_COEF"    value="{ 0, 0, 0, 0 }"/>
@@ -144,8 +144,8 @@
     <define name="PHI_I" value="{30, 30}"/>
     <define name="PHI_DD" value="{0, 0}"/>
 
-    <define name="THETA_P" value="{100, 80}"/>
-    <define name="THETA_D" value="{100, 110}"/>
+    <define name="THETA_P" value="{100, 100}"/>
+    <define name="THETA_D" value="{100, 100}"/>
     <define name="THETA_I" value="{40, 40}"/>
     <define name="THETA_DD" value="{0, 0}"/>
 
@@ -304,13 +304,6 @@
           <define name="SAFETY_WARNING_LED" value="BODY"/>
     </load>
 
-    <load name="sonar_adc.xml">
-      <configure name="ADC_SONAR" value="ADC_2"/>
-<!--       <define name="USE_SONAR"/> -->
-      <define name="SENSOR_SYNC_SEND_SONAR"/>
-      <define name="SONAR_SCALE" value="0.0032"/>
-    </load>
-
   <!--Use an airspeed sensor and get the measured airspeed in the messages-->
 <!--    <load name="airspeed_ets.xml">
       <define name="AIRSPEED_ETS_SYNC_SEND"/>
@@ -327,7 +320,7 @@
     </load>-->
 
   <!-- Load this module to use multiple gain sets, which have to be specified in the gain sets section -->
-    <load name="gain_scheduling.xml"/>
+<!--     <load name="gain_scheduling.xml"/> -->
   </modules>
 
   <firmware name="rotorcraft">
@@ -361,8 +354,8 @@
 <!--    <subsystem name="telemetry"     type="transparent"/> -->
     <subsystem name="imu"           type="aspirin_v2.1"/>
     <subsystem name="gps"           type="ublox"/>
-    <subsystem name="stabilization" type="int_quat"/>
-<!--     <subsystem name="stabilization" type="indi"/> -->
+<!--     <subsystem name="stabilization" type="int_quat"/> -->
+    <subsystem name="stabilization" type="indi"/>
 
     <subsystem name="ahrs"          type="int_cmpl_quat">
       <configure name="USE_MAGNETOMETER" value="1"/>
