@@ -286,7 +286,7 @@
     <define name="FAILSAFE_GROUND_DETECT" value="TRUE"/>
     <define name="HYBRID_NAVIGATION" value="TRUE"/>
     <define name="NO_RC_THRUST_LIMIT" value="TRUE"/>
-    <define name="ADAPTIVE_INDI" value="FALSE"/>
+    <define name="ADAPTIVE_INDI" value="TRUE"/>
   </section>
 
   <section name="SIMULATOR" prefix="NPS_">

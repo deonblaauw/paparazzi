@@ -90,7 +90,7 @@
     </block>
     <block name="descent_slow">
       <exception cond="2.0 > stateGetPositionEnu_f()->z" deroute="flare"/>
-      <stay climb="0.5" vmode="climb" wp="STDBY"/>
+      <stay climb="-0.5" vmode="climb" wp="STDBY"/>
     </block>
     <block name="flare">
       <exception cond="0.3 > sonar_adc.distance" deroute="landed"/>

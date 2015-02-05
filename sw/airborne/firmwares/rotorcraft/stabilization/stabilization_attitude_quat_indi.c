@@ -71,9 +71,11 @@ struct FloatRates udot = {0., 0., 0.};
 struct FloatRates udotdot = {0., 0., 0.};
 struct FloatRates filt_rate = {0., 0., 0.};
 
-float eff[3] = {0.05, 0.05, 0.02};
+float eff[3] = {0.025, 0.1, 0.006};
 float inv_eff_disp[3] = {14, 14, 100};
 float lambda_inv = 3000.0;
+
+struct Int32Quat stabilization_att_sum_err_quat;
 
 #define IERROR_SCALE 1024
 #define GAIN_PRESCALER_FF 48
@@ -130,6 +132,8 @@ void stabilization_attitude_init(void) {
 
   stabilization_attitude_ref_init();
 
+  int32_quat_identity(&stabilization_att_sum_err_quat);
+
 #if PERIODIC_TELEMETRY
   register_periodic_telemetry(DefaultPeriodic, "AHRS_REF_QUAT", send_ahrs_ref_quat);
   register_periodic_telemetry(DefaultPeriodic, "STAB_ATTITUDE_INDI", send_att_indi);
@@ -142,6 +146,8 @@ void stabilization_attitude_enter(void) {
   stab_att_sp_euler.psi = stabilization_attitude_get_heading_i();
 
   stabilization_attitude_ref_enter();
+
+  int32_quat_identity(&stabilization_att_sum_err_quat);
 
   FLOAT_RATES_ZERO(filtered_rate);
   FLOAT_RATES_ZERO(filtered_rate_deriv);
@@ -231,7 +237,8 @@ static void attitude_run_indi(int32_t indi_commands[], struct Int32Quat *att_err
     FLOAT_RATES_ZERO(udotdot);
   }
   else {
-    lms_estimation();
+    if(adaptive_indi)
+      lms_estimation();
   }
 
   //Save error for displaying purposes
@@ -244,19 +251,22 @@ static void attitude_run_indi(int32_t indi_commands[], struct Int32Quat *att_err
 }
 
 static void attitude_run_fb(int32_t fb_commands[], struct Int32AttitudeGains *gains, struct Int32Quat *att_err,
-    struct Int32Rates *rate_err) {
+    struct Int32Rates *rate_err, struct Int32Quat *sum_err) {
   /*  PID feedback */
   fb_commands[COMMAND_ROLL] =
     GAIN_PRESCALER_P * gains->p.x  * QUAT1_FLOAT_OF_BFP(att_err->qx) / 4 +
-    GAIN_PRESCALER_D * gains->d.x  * RATE_FLOAT_OF_BFP(rate_err->p) / 16;
+    GAIN_PRESCALER_D * gains->d.x  * RATE_FLOAT_OF_BFP(rate_err->p) / 16 +
+    GAIN_PRESCALER_I * gains->i.x  * QUAT1_FLOAT_OF_BFP(sum_err->qx) / 2;
 
   fb_commands[COMMAND_PITCH] =
     GAIN_PRESCALER_P * gains->p.y  * QUAT1_FLOAT_OF_BFP(att_err->qy) / 4 +
-    GAIN_PRESCALER_D * gains->d.y  * RATE_FLOAT_OF_BFP(rate_err->q)  / 16;
+    GAIN_PRESCALER_D * gains->d.y  * RATE_FLOAT_OF_BFP(rate_err->q)  / 16 +
+    GAIN_PRESCALER_I * gains->i.y  * QUAT1_FLOAT_OF_BFP(sum_err->qy) / 2;
 
   fb_commands[COMMAND_YAW] =
     GAIN_PRESCALER_P * gains->p.z  * QUAT1_FLOAT_OF_BFP(att_err->qz) / 4 +
-    GAIN_PRESCALER_D * gains->d.z  * RATE_FLOAT_OF_BFP(rate_err->r)  / 16;
+    GAIN_PRESCALER_D * gains->d.z  * RATE_FLOAT_OF_BFP(rate_err->r)  / 16+
+    GAIN_PRESCALER_I * gains->i.z  * QUAT1_FLOAT_OF_BFP(sum_err->qz) / 2;
 
 }
 
@@ -280,6 +290,8 @@ void stabilization_attitude_run(bool_t enable_integrator) {
   if(radio_control.values[5] > 0) {
     /* compute the INDI command */
     attitude_run_indi(stabilization_att_indi_cmd, &att_err);
+
+    int32_quat_identity(&stabilization_att_sum_err_quat);
   }
   else {
     struct Int32Rates rate_err;
@@ -287,8 +299,23 @@ void stabilization_attitude_run(bool_t enable_integrator) {
     rate_err.p = - body_rate->p;
     rate_err.q = - body_rate->q;
     rate_err.r = - body_rate->r;
+
+#define INTEGRATOR_BOUND 100000
+  /* integrated error */
+  if (enable_integrator) {
+    stabilization_att_sum_err_quat.qx += att_err.qx /IERROR_SCALE;
+    stabilization_att_sum_err_quat.qy += att_err.qy /IERROR_SCALE;
+    stabilization_att_sum_err_quat.qz += att_err.qz /IERROR_SCALE;
+    Bound(stabilization_att_sum_err_quat.qx,-INTEGRATOR_BOUND,INTEGRATOR_BOUND);
+    Bound(stabilization_att_sum_err_quat.qy,-INTEGRATOR_BOUND,INTEGRATOR_BOUND);
+    Bound(stabilization_att_sum_err_quat.qz,-INTEGRATOR_BOUND,INTEGRATOR_BOUND);
+  } else {
+    /* reset accumulator */
+    int32_quat_identity(&stabilization_att_sum_err_quat);
+  }
+
     /* compute the feed back command */
-    attitude_run_fb(stabilization_att_indi_cmd, &stabilization_gains, &att_err, &rate_err);
+    attitude_run_fb(stabilization_att_indi_cmd, &stabilization_gains, &att_err, &rate_err, &stabilization_att_sum_err_quat);
   }
 
   stabilization_cmd[COMMAND_ROLL] = stabilization_att_indi_cmd[COMMAND_ROLL];
