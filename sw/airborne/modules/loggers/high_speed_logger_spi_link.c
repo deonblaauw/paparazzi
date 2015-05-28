@@ -29,6 +29,7 @@
 
 #include "stabilization.h"
 #include "stabilization/stabilization_attitude_quat_indi.h"
+#include "guidance/guidance_h.h"
 
 struct high_speed_logger_spi_link_data high_speed_logger_spi_link_data;
 struct spi_transaction high_speed_logger_spi_link_transaction;
@@ -67,13 +68,13 @@ void high_speed_logger_spi_link_periodic(void)
     high_speed_logger_spi_link_data.gyro_deriv_p      = filtered_rate_deriv.p;
     high_speed_logger_spi_link_data.gyro_deriv_q      = filtered_rate_deriv.q;
     high_speed_logger_spi_link_data.gyro_deriv_r      = filtered_rate_deriv.r;
-    high_speed_logger_spi_link_data.motor1            = motor_mixing.commands[0];
+    high_speed_logger_spi_link_data.motor1            = transition_theta_offset;
     high_speed_logger_spi_link_data.motor2            = motor_mixing.commands[1];
     high_speed_logger_spi_link_data.motor3            = motor_mixing.commands[2];
     high_speed_logger_spi_link_data.motor4            = motor_mixing.commands[3];
-    high_speed_logger_spi_link_data.cmd_thrust        = stabilization_cmd[COMMAND_THRUST];
-    high_speed_logger_spi_link_data.cmd_roll          = stabilization_cmd[COMMAND_ROLL];
-    high_speed_logger_spi_link_data.cmd_pitch         = stabilization_cmd[COMMAND_PITCH];
+    high_speed_logger_spi_link_data.cmd_thrust        = u_in.p;
+    high_speed_logger_spi_link_data.cmd_roll          = u_in.q;
+    high_speed_logger_spi_link_data.cmd_pitch         = u_in.r;
     high_speed_logger_spi_link_data.cmd_yaw           = stabilization_cmd[COMMAND_YAW];
 
     spi_submit(&(HIGH_SPEED_LOGGER_SPI_LINK_DEVICE), &high_speed_logger_spi_link_transaction);

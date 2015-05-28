@@ -160,7 +160,7 @@
     <!-- setpoints -->
     <define name="SP_MAX_PHI"     value="60." unit="deg"/>
     <define name="SP_MAX_THETA"   value="60." unit="deg"/>
-    <define name="SP_MAX_R"       value="180." unit="deg/s"/>
+    <define name="SP_MAX_R"       value="100." unit="deg/s"/>
     <define name="DEADBAND_R"     value="250"/>
     <define name="DEADBAND_A"     value="250"/>
     <define name="SP_PSI_DELTA_LIMIT" value="90" unit="deg"/>
@@ -210,13 +210,13 @@
     <define name="SP_PSI_DELTA_LIMIT" value="90" unit="deg"/>
     <!-- control effectiveness -->
     <define name="CONTROL_EFFECTIVENESS_P" value="40.0"/>
-    <define name="CONTROL_EFFECTIVENESS_Q" value="9.0"/>
+    <define name="CONTROL_EFFECTIVENESS_Q" value="12.0"/>
     <define name="CONTROL_EFFECTIVENESS_R" value="170.0"/>
     <!-- reference acceleration for attitude control -->
-    <define name="REF_ERR_P" value="70.0"/>
-    <define name="REF_ERR_Q" value="90.0"/>
+    <define name="REF_ERR_P" value="107.0"/>
+    <define name="REF_ERR_Q" value="107.0"/>
     <define name="REF_ERR_R" value="70.0"/>
-    <define name="REF_RATE_P" value="12.0"/>
+    <define name="REF_RATE_P" value="13.0"/>
     <define name="REF_RATE_Q" value="13.0"/>
     <define name="REF_RATE_R" value="12.0"/>
     <!-- second order filter parameters -->
@@ -225,9 +225,9 @@
     <define name="FILT_OMEGA_R" value="40.0"/>
     <define name="FILT_ZETA_R" value="0.5"/>
     <!-- first order actuator dynamics -->
-    <define name="ACT_DYN_P" value="0.03"/>
-    <define name="ACT_DYN_Q" value="0.03"/>
-    <define name="ACT_DYN_R" value="0.03"/>
+    <define name="ACT_DYN_P" value="0.035"/>
+    <define name="ACT_DYN_Q" value="0.035"/>
+    <define name="ACT_DYN_R" value="0.035"/>
   </section>
 
 
@@ -316,7 +316,7 @@
       <define name="AIRSPEED_ETS_SYNC_SEND"/>
     </load>-->
 
-<!--     <load name="high_speed_logger_spi_link.xml"/> -->
+    <load name="high_speed_logger_spi_link.xml"/>
 
 <!--    <load name="AOA_adc.xml">
       <configure name="ADC_AOA" value="ADC_2"/>
