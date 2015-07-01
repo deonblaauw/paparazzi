@@ -49,8 +49,8 @@
     <let var="forward_right" value="aileron_gain*$aileron_feedback_right+elevator_gain*$elevator_feedback_right"/>-->
 
 <!--     if using PID with gain scheduling -->
-    <let var="forward_left"  value="15*$aileron_feedback_left + 0*$elevator_feedback_left"/>
-    <let var="forward_right" value="15*$aileron_feedback_right + 0*$elevator_feedback_right"/>
+    <let var="forward_left"  value="15*$aileron_feedback_left + 5*$elevator_feedback_left"/>
+    <let var="forward_right" value="15*$aileron_feedback_right + 5*$elevator_feedback_right"/>
 
     <!-- This statement tells the autopilot to use the hover feedback if in mode attitude direct and to use the forward feedback in all other cases-->
     <set servo="ELEVON_LEFT"    value="AP_MODE == AP_MODE_ATTITUDE_DIRECT ? $hover_left  : $forward_left" />
@@ -107,14 +107,14 @@
   <section name="AUTOPILOT">
     <define name="MODE_MANUAL"  value="AP_MODE_ATTITUDE_DIRECT"/>
     <define name="MODE_AUTO1" value="AP_MODE_FORWARD"/>
-    <define name="MODE_AUTO2"  value="AP_MODE_NAV"/>
+    <define name="MODE_AUTO2"  value="AP_MODE_ATTITUDE_DIRECT"/>
 
 <!--     <define name="USE_YAW_FOR_MOTOR_ARMING" value="TRUE"/> -->
   </section>
 
   <section name="BAT">
-    <define name="MIN_BAT_LEVEL" value="10.4" units="V"/>
-    <define name="CATASTROPHIC_BAT_LEVEL" value="9.3" unit="V"/>
+    <define name="MIN_BAT_LEVEL" value="10.7" units="V"/>
+    <define name="CATASTROPHIC_BAT_LEVEL" value="10.1" unit="V"/>
   </section>
 
   <section name="STABILIZATION_RATE" prefix="STABILIZATION_RATE_">
@@ -220,10 +220,10 @@
     <define name="REF_RATE_Q" value="13.0"/>
     <define name="REF_RATE_R" value="12.0"/>
     <!-- second order filter parameters -->
-    <define name="FILT_OMEGA" value="50.0"/>
-    <define name="FILT_ZETA" value="0.37"/>
-    <define name="FILT_OMEGA_R" value="40.0"/>
-    <define name="FILT_ZETA_R" value="0.5"/>
+    <define name="FILT_OMEGA" value="20.0"/>
+    <define name="FILT_ZETA" value="0.7"/>
+    <define name="FILT_OMEGA_R" value="20.0"/>
+    <define name="FILT_ZETA_R" value="0.55"/>
     <!-- first order actuator dynamics -->
     <define name="ACT_DYN_P" value="0.035"/>
     <define name="ACT_DYN_Q" value="0.035"/>

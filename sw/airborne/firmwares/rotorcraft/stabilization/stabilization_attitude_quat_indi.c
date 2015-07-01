@@ -73,7 +73,7 @@ struct FloatRates filt_rate = {0., 0., 0.};
 
 float eff[3] = {0.025, 0.1, 0.006};
 float inv_eff_disp[3] = {14, 14, 100};
-float lambda_inv = 3000.0;
+float lambda_inv = 500.0;
 
 struct Int32Quat stabilization_att_sum_err_quat;
 
@@ -115,10 +115,11 @@ static void send_ahrs_ref_quat(struct transport_tx *trans, struct link_device *d
 }
 
 static void send_att_indi(struct transport_tx *trans, struct link_device *dev) {
+  float radio_bla = radio_control.values[5];
   pprz_msg_send_STAB_ATTITUDE_INDI(trans, dev, AC_ID,
                                    &filtered_rate_deriv.p,
                                    &filtered_rate_deriv.q,
-                                   &filtered_rate_deriv.r,
+                                   &radio_bla,
                                    &inv_control_effectiveness.p,
                                    &inv_control_effectiveness.q,
                                    &inv_control_effectiveness.r,
@@ -211,6 +212,11 @@ static void attitude_run_indi(int32_t indi_commands[], struct Int32Quat *att_err
   angular_accel_ref.r = reference_acceleration.err_r * QUAT1_FLOAT_OF_BFP(att_err->qz)
                       - reference_acceleration.rate_r * stateGetBodyRates_f()->r;
 
+  float percentage = FLOAT_OF_BFP(transition_percentage,INT32_PERCENTAGE_FRAC);
+
+//   inv_control_effectiveness.q = (STABILIZATION_INDI_CONTROL_EFFECTIVENESS_Q * (100.0-percentage) + 35.0 * percentage)/100.0;
+//   inv_control_effectiveness.r = (STABILIZATION_INDI_CONTROL_EFFECTIVENESS_R * (100.0-percentage) + 13.0 * percentage)/100.0;
+
   indi_du.p = inv_control_effectiveness.p * (angular_accel_ref.p - filtered_rate_deriv.p);
   indi_du.q = inv_control_effectiveness.q * (angular_accel_ref.q - filtered_rate_deriv.q);
   indi_du.r = inv_control_effectiveness.r * (angular_accel_ref.r - filtered_rate_deriv.r);
@@ -237,7 +243,7 @@ static void attitude_run_indi(int32_t indi_commands[], struct Int32Quat *att_err
     FLOAT_RATES_ZERO(udotdot);
   }
   else {
-    if(adaptive_indi)
+//     if(adaptive_indi)
       lms_estimation();
   }
 
@@ -287,7 +293,7 @@ void stabilization_attitude_run(bool_t enable_integrator) {
   int32_quat_wrap_shortest(&att_err);
   int32_quat_normalize(&att_err);
 
-  if(radio_control.values[5] > 0) {
+  if(true) {//radio_control.values[5] > 0) {
     /* compute the INDI command */
     attitude_run_indi(stabilization_att_indi_cmd, &att_err);
 
@@ -375,24 +381,23 @@ void stabilization_indi_filter_inputs(void) {
 
 void lms_estimation(void) {
   //Estimation per axis
-  float du_axis[3] = {udot.p, udot.q, udot.r};
+  float du_axis[3] = {udot.p/1000.0, udot.q/1000.0, udot.r/1000.0};
   float dx_axis[3] = {filtered_rate_2deriv.p, filtered_rate_2deriv.q, filtered_rate_2deriv.r};
   float lambda_axis[3] = {1.0/lambda_inv, 1.0/lambda_inv, 0.3/lambda_inv};
 
     for(int8_t i=0; i<3; i++) {
-      if((abs(dx_axis[i]) > 50.0) && (abs(du_axis[i]) > 300.0)) {
-        eff[i] = eff[i] - (eff[i]*du_axis[i] - dx_axis[i])/du_axis[i]*lambda_axis[i];
-      }
+        eff[i] = eff[i] - (eff[i]*du_axis[i] - dx_axis[i])*du_axis[i]*lambda_axis[i];
+        Bound(eff[i], 0.005*1000, 0.3*1000);
     }
 
-    inv_eff_disp[0] = 1.0/eff[0];
-    inv_eff_disp[1] = 1.0/eff[1];
-    inv_eff_disp[2] = 1.0/eff[2];
+    inv_eff_disp[0] = 1.0/(eff[0]/1000.0);
+    inv_eff_disp[1] = 1.0/(eff[1]/1000.0);
+    inv_eff_disp[2] = 1.0/(eff[2]/1000.0);
 
-    if(adaptive_indi) {
-      inv_control_effectiveness.p = 1.0/eff[0];
-      inv_control_effectiveness.q = 1.0/eff[1];
-      inv_control_effectiveness.r = 1.0/eff[2];
+    if(adaptive_indi && (radio_control.values[5]<0)) {
+      inv_control_effectiveness.p = 1.0/(eff[0]/1000.0);
+      inv_control_effectiveness.q = 1.0/(eff[1]/1000.0);
+      inv_control_effectiveness.r = 1.0/(eff[2]/1000.0);
     }
     else {
       inv_control_effectiveness.p = STABILIZATION_INDI_CONTROL_EFFECTIVENESS_P;

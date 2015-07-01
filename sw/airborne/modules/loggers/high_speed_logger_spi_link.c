@@ -26,6 +26,7 @@
 #include "mcu_periph/spi.h"
 #include "subsystems/actuators/motor_mixing.h"
 #include "state.h"
+#include "subsystems/radio_control.h"
 
 #include "stabilization.h"
 #include "stabilization/stabilization_attitude_quat_indi.h"
@@ -69,13 +70,13 @@ void high_speed_logger_spi_link_periodic(void)
     high_speed_logger_spi_link_data.gyro_deriv_q      = filtered_rate_deriv.q;
     high_speed_logger_spi_link_data.gyro_deriv_r      = filtered_rate_deriv.r;
     high_speed_logger_spi_link_data.motor1            = transition_theta_offset;
-    high_speed_logger_spi_link_data.motor2            = motor_mixing.commands[1];
-    high_speed_logger_spi_link_data.motor3            = motor_mixing.commands[2];
-    high_speed_logger_spi_link_data.motor4            = motor_mixing.commands[3];
+    high_speed_logger_spi_link_data.motor2            = angular_accel_ref.p;
+    high_speed_logger_spi_link_data.motor3            = angular_accel_ref.q;
+    high_speed_logger_spi_link_data.motor4            = angular_accel_ref.r;
     high_speed_logger_spi_link_data.cmd_thrust        = u_in.p;
     high_speed_logger_spi_link_data.cmd_roll          = u_in.q;
     high_speed_logger_spi_link_data.cmd_pitch         = u_in.r;
-    high_speed_logger_spi_link_data.cmd_yaw           = stabilization_cmd[COMMAND_YAW];
+    high_speed_logger_spi_link_data.cmd_yaw           = radio_control.values[RADIO_PITCH];
 
     spi_submit(&(HIGH_SPEED_LOGGER_SPI_LINK_DEVICE), &high_speed_logger_spi_link_transaction);
   }
