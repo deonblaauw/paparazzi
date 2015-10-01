@@ -62,21 +62,24 @@ void high_speed_logger_spi_link_periodic(void)
   if (high_speed_logger_spi_link_ready)
   {
     struct FloatRates* body_rates = stateGetBodyRates_f();
+    struct FloatQuat* quat = stateGetNedToBodyQuat_f();
+
     high_speed_logger_spi_link_ready = FALSE;
     high_speed_logger_spi_link_data.gyro_p            = body_rates->p;
     high_speed_logger_spi_link_data.gyro_q            = body_rates->q;
     high_speed_logger_spi_link_data.gyro_r            = body_rates->r;
-    high_speed_logger_spi_link_data.gyro_deriv_p      = filtered_rate_deriv.p;
-    high_speed_logger_spi_link_data.gyro_deriv_q      = filtered_rate_deriv.q;
-    high_speed_logger_spi_link_data.gyro_deriv_r      = filtered_rate_deriv.r;
-    high_speed_logger_spi_link_data.motor1            = transition_theta_offset;
-    high_speed_logger_spi_link_data.motor2            = angular_accel_ref.p;
-    high_speed_logger_spi_link_data.motor3            = angular_accel_ref.q;
-    high_speed_logger_spi_link_data.motor4            = angular_accel_ref.r;
-    high_speed_logger_spi_link_data.cmd_thrust        = u_in.p;
-    high_speed_logger_spi_link_data.cmd_roll          = u_in.q;
-    high_speed_logger_spi_link_data.cmd_pitch         = u_in.r;
+    high_speed_logger_spi_link_data.quati             = quat->qi;
+    high_speed_logger_spi_link_data.quatx             = quat->qx;
+    high_speed_logger_spi_link_data.quaty             = quat->qy;
+    high_speed_logger_spi_link_data.quatz             = quat->qz;
+    high_speed_logger_spi_link_data.ang_accel_ref_p   = angular_accel_ref.p;
+    high_speed_logger_spi_link_data.ang_accel_ref_q   = angular_accel_ref.q;
+    high_speed_logger_spi_link_data.ang_accel_ref_r   = angular_accel_ref.r;
+    high_speed_logger_spi_link_data.u_in_p            = u_in.p;
+    high_speed_logger_spi_link_data.u_in_q            = u_in.q;
+    high_speed_logger_spi_link_data.u_in_r            = u_in.r;
     high_speed_logger_spi_link_data.cmd_yaw           = radio_control.values[RADIO_PITCH];
+    high_speed_logger_spi_link_data.extra3            = transition_theta_offset;
 
     spi_submit(&(HIGH_SPEED_LOGGER_SPI_LINK_DEVICE), &high_speed_logger_spi_link_transaction);
   }

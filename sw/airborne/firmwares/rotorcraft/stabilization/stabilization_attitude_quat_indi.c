@@ -215,7 +215,7 @@ static void attitude_run_indi(int32_t indi_commands[], struct Int32Quat *att_err
   float percentage = FLOAT_OF_BFP(transition_percentage,INT32_PERCENTAGE_FRAC);
 
 //   inv_control_effectiveness.q = (STABILIZATION_INDI_CONTROL_EFFECTIVENESS_Q * (100.0-percentage) + 35.0 * percentage)/100.0;
-//   inv_control_effectiveness.r = (STABILIZATION_INDI_CONTROL_EFFECTIVENESS_R * (100.0-percentage) + 13.0 * percentage)/100.0;
+  inv_control_effectiveness.r = (STABILIZATION_INDI_CONTROL_EFFECTIVENESS_R * (100.0-percentage) + 25.0 * percentage)/100.0;
 
   indi_du.p = inv_control_effectiveness.p * (angular_accel_ref.p - filtered_rate_deriv.p);
   indi_du.q = inv_control_effectiveness.q * (angular_accel_ref.q - filtered_rate_deriv.q);

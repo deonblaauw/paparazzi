@@ -35,16 +35,16 @@ struct PACKED high_speed_logger_spi_link_data {
     float gyro_p;     // 2
     float gyro_q;
     float gyro_r;
-    float gyro_deriv_p;      // 5
-    float gyro_deriv_q;
-    float gyro_deriv_r;
-    int32_t motor1;      // 8
-    int32_t motor2;
-    int32_t motor3;
-    int32_t motor4;       // 11
-    int32_t cmd_thrust;
-    int32_t cmd_roll;
-    int32_t cmd_pitch;     // 14
+    float quati;      // 5
+    float quatx;
+    float quaty;
+    float quatz;      // 8
+    float ang_accel_ref_p;
+    float ang_accel_ref_q;
+    float ang_accel_ref_r;       // 11
+    float u_in_p;
+    float u_in_q;
+    float u_in_r;    // 14
     int32_t cmd_yaw;     // 15
     int32_t extra3;     // 16
 };

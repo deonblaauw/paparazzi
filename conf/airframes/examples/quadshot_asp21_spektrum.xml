@@ -49,8 +49,8 @@
     <let var="forward_right" value="aileron_gain*$aileron_feedback_right+elevator_gain*$elevator_feedback_right"/>-->
 
 <!--     if using PID with gain scheduling -->
-    <let var="forward_left"  value="15*$aileron_feedback_left + 5*$elevator_feedback_left"/>
-    <let var="forward_right" value="15*$aileron_feedback_right + 5*$elevator_feedback_right"/>
+    <let var="forward_left"  value="15*$aileron_feedback_left + 15*$elevator_feedback_left"/>
+    <let var="forward_right" value="15*$aileron_feedback_right + 15*$elevator_feedback_right"/>
 
     <!-- This statement tells the autopilot to use the hover feedback if in mode attitude direct and to use the forward feedback in all other cases-->
     <set servo="ELEVON_LEFT"    value="AP_MODE == AP_MODE_ATTITUDE_DIRECT ? $hover_left  : $forward_left" />
@@ -113,7 +113,9 @@
   </section>
 
   <section name="BAT">
-    <define name="MIN_BAT_LEVEL" value="10.7" units="V"/>
+<!--     <define name="MIN_BAT_LEVEL" value="10.8" units="V"/> -->
+    <define name="CRITIC_BAT_LEVEL" value="10.8" unit="V"/>
+    <define name="LOW_BAT_LEVEL" value="10.8" unit="V"/>
     <define name="CATASTROPHIC_BAT_LEVEL" value="10.1" unit="V"/>
   </section>
 
@@ -213,21 +215,21 @@
     <define name="CONTROL_EFFECTIVENESS_Q" value="12.0"/>
     <define name="CONTROL_EFFECTIVENESS_R" value="170.0"/>
     <!-- reference acceleration for attitude control -->
-    <define name="REF_ERR_P" value="107.0"/>
-    <define name="REF_ERR_Q" value="107.0"/>
+    <define name="REF_ERR_P" value="70.0"/>
+    <define name="REF_ERR_Q" value="45.0"/>
     <define name="REF_ERR_R" value="70.0"/>
-    <define name="REF_RATE_P" value="13.0"/>
-    <define name="REF_RATE_Q" value="13.0"/>
+    <define name="REF_RATE_P" value="9.0"/>
+    <define name="REF_RATE_Q" value="16.0"/>
     <define name="REF_RATE_R" value="12.0"/>
     <!-- second order filter parameters -->
-    <define name="FILT_OMEGA" value="20.0"/>
+    <define name="FILT_OMEGA" value="50.0"/>
     <define name="FILT_ZETA" value="0.7"/>
     <define name="FILT_OMEGA_R" value="20.0"/>
     <define name="FILT_ZETA_R" value="0.55"/>
     <!-- first order actuator dynamics -->
-    <define name="ACT_DYN_P" value="0.035"/>
-    <define name="ACT_DYN_Q" value="0.035"/>
-    <define name="ACT_DYN_R" value="0.035"/>
+    <define name="ACT_DYN_P" value="0.03"/>
+    <define name="ACT_DYN_Q" value="0.03"/>
+    <define name="ACT_DYN_R" value="0.03"/>
   </section>
 
 
@@ -271,7 +273,7 @@
     <!--The Quadshot uses a slightly different axis system for the setpoint, to make both hovering and flying forward intuitive-->
     <define name="USE_EARTH_BOUND_RC_SETPOINT" value="TRUE"/>
     <!-- This is the pitch angle that the Quadshot will have in forward flight, where 0 degrees is hover-->
-    <define name="TRANSITION_MAX_OFFSET" value="-85.0" unit="deg"/>
+    <define name="TRANSITION_MAX_OFFSET" value="-75.0" unit="deg"/>
 
     <define name="RC_LOST_MODE" value="MODE_AUTO2"/>
 
@@ -340,7 +342,7 @@
     </subsystem>
 
     <!-- ONLY if flashing via JTAG cable -->
-    <configure name="FLASH_MODE"   value="JTAG"/>
+    <configure name="FLASH_MODE"   value="SWD"/>
     <configure name="BMP_PORT" value="/dev/ttyACM0" />
 
  <!-- To use an airspeed sensor on I2C, enable I2C2-->
