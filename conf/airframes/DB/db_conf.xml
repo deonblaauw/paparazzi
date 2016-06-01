@@ -28,8 +28,8 @@
    radio="radios/dummy.xml"
    telemetry="telemetry/DB/db_default_rotorcraft.xml"
    flight_plan="flight_plans/DB/db_cyberzoo.xml"
-   settings="settings/rotorcraft_basic.xml settings/control/stabilization_att_int_quat.xml"
-   settings_modules="modules/gps_ubx_ucenter.xml"
-   gui_color="red"
+   settings="settings/rotorcraft_basic.xml settings/modules/config_asctec_v2_new.xml"
+   settings_modules="[modules/gps_ubx_ucenter.xml]"
+   gui_color="#b2fcccc4d384"
   />
 </conf>
