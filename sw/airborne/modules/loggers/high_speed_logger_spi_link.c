@@ -24,6 +24,7 @@
 
 #include "subsystems/imu.h"
 #include "mcu_periph/spi.h"
+#include "state.h"
 
 struct high_speed_logger_spi_link_data high_speed_logger_spi_link_data;
 struct spi_transaction high_speed_logger_spi_link_transaction;
@@ -53,6 +54,7 @@ void high_speed_logger_spi_link_init(void)
 
 void high_speed_logger_spi_link_periodic(void)
 {
+  struct Int32Eulers *eulers = stateGetNedToBodyEulers_i();
   if (high_speed_logger_spi_link_ready) {
     high_speed_logger_spi_link_ready = false;
     high_speed_logger_spi_link_data.gyro_p     = imu.gyro_unscaled.p;
@@ -64,6 +66,9 @@ void high_speed_logger_spi_link_periodic(void)
     high_speed_logger_spi_link_data.mag_x      = imu.mag_unscaled.x;
     high_speed_logger_spi_link_data.mag_y      = imu.mag_unscaled.y;
     high_speed_logger_spi_link_data.mag_z      = imu.mag_unscaled.z;
+    high_speed_logger_spi_link_data.phi        = eulers->phi;
+    high_speed_logger_spi_link_data.theta      = eulers->theta;
+    high_speed_logger_spi_link_data.psi        = eulers->psi;
 
     spi_submit(&(HIGH_SPEED_LOGGER_SPI_LINK_DEVICE), &high_speed_logger_spi_link_transaction);
   }
