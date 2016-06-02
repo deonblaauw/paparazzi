@@ -242,6 +242,7 @@
   </section>
 
   <modules main_freq="512">
+    <module name="geo_mag"/>
     <module name="gps" type="ubx_ucenter"/>
 
     <!-- The the led_safety_status module will make the Quadshot LEDs blink in certain patterns when there are safety violations-->
