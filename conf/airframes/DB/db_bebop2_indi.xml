@@ -23,7 +23,7 @@
     <module name="imu" type="bebop"/>
     <module name="gps" type="ublox"/>
     <module name="stabilization" type="indi"/>
-    <module name="ahrs" type="int_cmpl_quat">
+    <module name="ahrs" type="float_cmpl_quat">
       <configure name="USE_MAGNETOMETER" value="TRUE"/>
       <define name="AHRS_USE_GPS_HEADING" value="FALSE"/>
       <define name="AHRS_HEADING_UPDATE_GPS_MIN_SPEED" value="0"/>
@@ -80,12 +80,19 @@
 
   <section name="IMU" prefix="IMU_">
     <!-- Magneto calibration -->
-    <define name="MAG_X_NEUTRAL" value="-88"/>
-    <define name="MAG_Y_NEUTRAL" value="-2"/>
-    <define name="MAG_Z_NEUTRAL" value="-155"/>
-    <define name="MAG_X_SENS" value="8.95009121895" integer="16"/>
-    <define name="MAG_Y_SENS" value="7.38216699167" integer="16"/>
-    <define name="MAG_Z_SENS" value="6.84143987599" integer="16"/>
+    <define name="MAG_X_NEUTRAL" value="-74"/>
+    <define name="MAG_Y_NEUTRAL" value="33"/>
+    <define name="MAG_Z_NEUTRAL" value="-189"/>
+    <define name="MAG_X_SENS" value="7.32880539549" integer="16"/>
+    <define name="MAG_Y_SENS" value="7.38826972194" integer="16"/>
+    <define name="MAG_Z_SENS" value="7.71693452252" integer="16"/>
+    <!-- Accelerometer Calibration -->
+<!--    <define name="ACCEL_X_NEUTRAL" value="72"/>
+    <define name="ACCEL_Y_NEUTRAL" value="-20"/>
+    <define name="ACCEL_Z_NEUTRAL" value="42"/>
+    <define name="ACCEL_X_SENS" value="2.44509248843" integer="16"/>
+    <define name="ACCEL_Y_SENS" value="2.44634245634" integer="16"/>
+    <define name="ACCEL_Z_SENS" value="2.43962899631" integer="16"/>-->
   </section>
 
   <!-- local magnetic field -->
@@ -192,7 +199,7 @@
 
   <section name="SIMULATOR" prefix="NPS_">
     <define name="ACTUATOR_NAMES" value="nw_motor, ne_motor, se_motor, sw_motor" type="string[]"/>
-    <define name="JSBSIM_MODEL" value="simple_x_quad" type="string"/>
+    <define name="JSBSIM_MODEL" value="simple_x_quad_ccw" type="string"/>
     <define name="SENSORS_PARAMS" value="nps_sensors_params_default.h" type="string"/>
   </section>
 
