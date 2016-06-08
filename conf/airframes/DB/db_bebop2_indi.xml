@@ -4,6 +4,7 @@
 
   <firmware name="rotorcraft">
     <target name="ap" board="bebop2">
+      <define name="USE_SONAR" value="TRUE"/>
       <define name="STABILIZATION_INDI_G2_R" value="0.20"/>
       <!--define name="FAILSAFE_GROUND_DETECT"/-->
     </target>
@@ -28,7 +29,12 @@
       <define name="AHRS_USE_GPS_HEADING" value="FALSE"/>
       <define name="AHRS_HEADING_UPDATE_GPS_MIN_SPEED" value="0"/>
     </module>
+    
+<!-- Enable the vertical estimator -->
     <module name="ins" type="extended"/>
+    
+<!-- Enable the horizontal estimator -->
+    <module name="ins" type="hff"/>
 
     <define name="KILL_ON_GROUND_DETECT" value="TRUE"/>
   </firmware>
