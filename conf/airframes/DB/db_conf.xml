@@ -11,9 +11,9 @@
    gui_color="#0d890debf1c6"
   />
   <aircraft
-   name="quadshot"
+   name="mavshot"
    ac_id="52"
-   airframe="airframes/DB/db_quadshot.xml"
+   airframe="airframes/DB/db_mavshot.xml"
    radio="radios/dummy.xml"
    telemetry="telemetry/DB/db_default_rotorcraft.xml"
    flight_plan="flight_plans/DB/db_outdoors.xml"
