@@ -86,11 +86,11 @@
       <stay climb="-1" vmode="climb" wp="STDBY"/>
     </block>
     <block name="descent_slow">
-      <exception cond="2.0 > stateGetPositionEnu_f()->z" deroute="flare"/>
+      <exception cond="4.0 > stateGetPositionEnu_f()->z" deroute="flare"/>
       <stay climb="-1" vmode="climb" wp="STDBY"/>
     </block>
     <block name="flare">
-      <exception cond="0.3 > sonar_adc.distance" deroute="landed"/>
+      <exception cond="0.5 > sonar_adc.distance" deroute="landed"/>
       <attitude pitch="0" roll="0" throttle="0.13" vmode="throttle"/>
     </block>
     <block name="landed">
