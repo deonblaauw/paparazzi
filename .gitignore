@@ -44,6 +44,8 @@ paparazzi.sublime-workspace
 *.config
 *.files
 *.includes
+*.creator.user.18
+*.creator.user.3.2-pre1
 
 # Vagrant VM files
 /.vagrant

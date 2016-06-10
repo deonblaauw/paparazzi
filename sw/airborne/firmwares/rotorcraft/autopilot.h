@@ -145,7 +145,14 @@ extern uint16_t autopilot_flight_time;
 #ifndef THRESHOLD_GROUND_DETECT
 #define THRESHOLD_GROUND_DETECT 25.0
 #endif
-/** Ground detection based on vertical acceleration.
+
+/**
+ * @brief  Ground detection based on vertical acceleration.
+ *
+ * Detailed description
+ * This function sets the autopilot_ground_detected flag when the z-axis acceleration exceeds THRESHOLD_GROUND_DETECT.
+ * Since this is a very basic implementation, it is not intended to be used for normal ground detection during landing,
+ * but it can be used to disable the engines upon excessively hard landings.
  */
 static inline void DetectGroundEvent(void)
 {
