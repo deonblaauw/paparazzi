@@ -1,16 +1,17 @@
-<!-- this is a mavshot vehicle equiped with Lisa/m2.0 and an aspirin 2.1
+<!-- This is a Hybrid Vehicle, based on the Quadshot, only with 8 motors.
+     The vehicle equiped with Lisa/m2.0 and an aspirin 2.1.
 	 The MavShot is a modified QuadShot with different motors and ESC configuration
      More information on the Quadshot can be found at transition-robotics.com -->
 
-<airframe name="mavshot aspirin 2.1 spektrum">
-
+<airframe name="octybrid aspirin 2.1 spektrum">
+	 
   <servos driver="Pwm">
-<!--    <servo name="A1" no="0" min="1000" neutral="1100" max="2000"/>
-    <servo name="A2" no="1" min="1000" neutral="1100" max="2000"/>
+    <servo name="A1" no="3" min="1000" neutral="1100" max="2000"/>
+    <servo name="A2" no="4" min="1000" neutral="1100" max="2000"/>
     <servo name="B1"  no="2" min="1000" neutral="1100" max="2000"/>
-    <servo name="B2"  no="3" min="1000" neutral="1100" max="2000"/>-->
-    <servo name="ELEVON_LEFT"  no="4" min="1000" neutral="1500" max="2000"/>
-    <servo name="ELEVON_RIGHT"  no="5" min="1000" neutral="1500" max="2000"/>
+    <servo name="B2"  no="5" min="1000" neutral="1100" max="2000"/>
+    <servo name="ELEVON_LEFT"  no="0" min="1000" neutral="1500" max="2000"/>
+    <servo name="ELEVON_RIGHT"  no="1" min="1000" neutral="1500" max="2000"/>
   </servos>
 
   <servos driver="Asctec_v2_new">
@@ -33,6 +34,11 @@
     <set servo="BACK"   value="motor_mixing.commands[1]"/>
     <set servo="LEFT"   value="motor_mixing.commands[2]"/>
     <set servo="RIGHT"  value="motor_mixing.commands[3]"/>
+    
+    <set servo="A1" value="motor_mixing.commands[4]"/>
+    <set servo="A2"  value="motor_mixing.commands[5]"/>
+    <set servo="B1" value="motor_mixing.commands[6]"/>
+    <set servo="B2"  value="motor_mixing.commands[7]"/>
 
     <!-- Mode dependent actuator laws for the elevons. The elevons act different in rc attitude flight mode-->
     <!-- First the correct feedback is stored in variables -->
@@ -58,12 +64,12 @@
     <define name="TRIM_ROLL" value="0"/>
     <define name="TRIM_PITCH" value="0"/>
     <define name="TRIM_YAW" value="0"/>
-    <define name="NB_MOTOR" value="4"/>
+    <define name="NB_MOTOR" value="8"/>
     <define name="SCALE" value="256"/>
-    <define name="PITCH_COEF"  value="{ -256, -256,  256,  256 }"/>
-    <define name="ROLL_COEF"   value="{  256, -256,  256, -256 }"/>
-    <define name="YAW_COEF"    value="{  256, -256, -128,  128 }"/>
-    <define name="THRUST_COEF" value="{  256,  256,  256,  256 }"/>
+    <define name="PITCH_COEF"  value="{ -256, -256,  256,  256 , 0 , 0 , 0 , 0}"/>
+    <define name="ROLL_COEF"   value="{  256, -256,  256, -256 , 0 , 0 , 0 , 0}"/>
+    <define name="YAW_COEF"    value="{  256, -256, -128,  128 , 0 , 0 , 0 , 0}"/>
+    <define name="THRUST_COEF" value="{  256,  256,  256,  256 , 256 , 256 , 256 , 256}"/>
   </section>
 
   <!-- If you got a caliberation XML document from your IMU supplier, import this in the IMU section -->
@@ -97,9 +103,10 @@
   </section>
 
   <section name="AUTOPILOT">
-    <define name="MODE_MANUAL"  value="AP_MODE_RC_DIRECT"/>
-    <define name="MODE_AUTO1" value="AP_MODE_FORWARD"/>
-    <define name="MODE_AUTO2"  value="AP_MODE_RATE_DIRECT"/>
+    <define name="MODE_MANUAL"  value="AP_MODE_ATTITUDE_DIRECT"/>
+<!--     <define name="MODE_AUTO1" value="AP_MODE_FORWARD"/> -->
+	<define name="MODE_AUTO1"  value="AP_MODE_ATTITUDE_DIRECT"/>
+    <define name="MODE_AUTO2"  value="AP_MODE_NAV"/>
 
 <!--     <define name="USE_THROTTLE_FOR_MOTOR_ARMING" value="TRUE"/> -->
   </section>
@@ -285,6 +292,13 @@
     <module name="stabilization" type="rate_indi"/>
     <module name="guidance"      type="hybrid"/>
     <module name="logger_spi_link"/>
+    
+    <load name="sonar_adc.xml">
+      <configure name="ADC_SONAR" value="ADC_2"/>
+<!--       <define name="USE_SONAR"/> -->
+      <define name="SENSOR_SYNC_SEND_SONAR"/>
+      <define name="SONAR_SCALE" value="0.0032"/>
+    </load>
     
     <module name="ahrs"          type="int_cmpl_quat">
       <configure name="USE_MAGNETOMETER" value="TRUE"/>

@@ -22,12 +22,23 @@
    gui_color="#ee1bf3780c03"
   />
   <aircraft
+   name="octybrid"
+   ac_id="54"
+   airframe="airframes/DB/db_octo_hybrid.xml"
+   radio="radios/cockpitSX.xml"
+   telemetry="telemetry/DB/db_quadshot.xml"
+   flight_plan="flight_plans/DB/db_hybrid_outdoors.xml"
+   settings="settings/rotorcraft_basic.xml settings/control/stabilization_indi.xml settings/control/hybrid_guidance.xml"
+   settings_modules="modules/geo_mag.xml modules/gps_ubx_ucenter.xml modules/gps.xml"
+   gui_color="blue"
+  />
+  <aircraft
    name="quadshot"
    ac_id="53"
    airframe="airframes/DB/db_quadshot_asp21_spektrum.xml"
    radio="radios/cockpitSX.xml"
    telemetry="telemetry/DB/db_quadshot.xml"
-   flight_plan="flight_plans/DB/db_quadshot_delft.xml"
+   flight_plan="flight_plans/DB/db_hybrid_outdoors.xml"
    settings="settings/rotorcraft_basic.xml settings/control/stabilization_indi.xml settings/control/hybrid_guidance.xml"
    settings_modules="modules/gps_ubx_ucenter.xml modules/gps.xml"
    gui_color="blue"
