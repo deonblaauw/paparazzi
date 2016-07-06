@@ -22,7 +22,7 @@
    gui_color="#ee1bf3780c03"
   />
   <aircraft
-   name="octybrid"
+   name="octo_beast"
    ac_id="54"
    airframe="airframes/DB/db_octo_hybrid.xml"
    radio="radios/cockpitSX.xml"

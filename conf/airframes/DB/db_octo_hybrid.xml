@@ -3,22 +3,22 @@
 	 The MavShot is a modified QuadShot with different motors and ESC configuration
      More information on the Quadshot can be found at transition-robotics.com -->
 
-<airframe name="octybrid aspirin 2.1 spektrum">
+<airframe name="octo_hybrid aspirin 2.1 spektrum">
 	 
   <servos driver="Pwm">
-    <servo name="A1" no="3" min="1000" neutral="1100" max="2000"/>
-    <servo name="A2" no="4" min="1000" neutral="1100" max="2000"/>
-    <servo name="B1"  no="2" min="1000" neutral="1100" max="2000"/>
-    <servo name="B2"  no="5" min="1000" neutral="1100" max="2000"/>
-    <servo name="ELEVON_LEFT"  no="0" min="1000" neutral="1500" max="2000"/>
+    <servo name="A1" 			no="3" min="1000" neutral="1100" max="2000"/>
+    <servo name="A2" 			no="4" min="1000" neutral="1100" max="2000"/>
+    <servo name="B1"  			no="2" min="1000" neutral="1100" max="2000"/>
+    <servo name="B2"  			no="5" min="1000" neutral="1100" max="2000"/>
+    <servo name="ELEVON_LEFT"  	no="0" min="1000" neutral="1500" max="2000"/>
     <servo name="ELEVON_RIGHT"  no="1" min="1000" neutral="1500" max="2000"/>
   </servos>
 
   <servos driver="Asctec_v2_new">
-    <servo name="FRONT"    no="0" min="0" neutral="3" max="200"/>
+    <servo name="FRONT"   no="0" min="0" neutral="3" max="200"/>
     <servo name="BACK"    no="1" min="0" neutral="3" max="200"/>
-    <servo name="LEFT"     no="2" min="0" neutral="3" max="200"/>
-    <servo name="RIGHT"     no="3" min="0" neutral="3" max="200"/>
+    <servo name="LEFT"    no="2" min="0" neutral="3" max="200"/>
+    <servo name="RIGHT"   no="3" min="0" neutral="3" max="200"/>
   </servos>
 
   <commands>
@@ -60,18 +60,42 @@
     <set servo="ELEVON_RIGHT"   value="AP_MODE == AP_MODE_ATTITUDE_DIRECT ? $hover_right  : $forward_right" />
   </command_laws>
 
+<!--   <section name="MIXING" prefix="MOTOR_MIXING_">
+    <define name="TRIM_ROLL" value="0"/>
+    <define name="TRIM_PITCH" value="0"/>
+    <define name="TRIM_YAW" value="0"/>
+    <define name="NB_MOTOR" value="8"/>
+    <define name="SCALE" value="256"/>
+    <define name="PITCH_COEF"  value="{ -256, -256,  256,  256 ,  256 , 256 , -256 , -256 }"/>
+    <define name="ROLL_COEF"   value="{  256, -256,  256, -256 , -256 , 256 , -256 ,  256 }"/>
+    <define name="YAW_COEF"    value="{  256, -256, -128,  128 , -256 , 256 ,  128 , -128 }"/>
+    <define name="THRUST_COEF" value="{  256,  256,  256,  256 ,  256 , 256 ,  256 ,  256 }"/>
+  </section> -->
+  
   <section name="MIXING" prefix="MOTOR_MIXING_">
     <define name="TRIM_ROLL" value="0"/>
     <define name="TRIM_PITCH" value="0"/>
     <define name="TRIM_YAW" value="0"/>
     <define name="NB_MOTOR" value="8"/>
     <define name="SCALE" value="256"/>
-    <define name="PITCH_COEF"  value="{ -256, -256,  256,  256 , 0 , 0 , 0 , 0}"/>
-    <define name="ROLL_COEF"   value="{  256, -256,  256, -256 , 0 , 0 , 0 , 0}"/>
-    <define name="YAW_COEF"    value="{  256, -256, -128,  128 , 0 , 0 , 0 , 0}"/>
-    <define name="THRUST_COEF" value="{  256,  256,  256,  256 , 256 , 256 , 256 , 256}"/>
+    <define name="PITCH_COEF"  value="{  0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 }"/>
+    <define name="ROLL_COEF"   value="{  0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 }"/>
+    <define name="YAW_COEF"    value="{  0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 }"/>
+    <define name="THRUST_COEF" value="{  0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 }"/>
   </section>
 
+<!--   <section name="MIXING" prefix="MOTOR_MIXING_">
+    <define name="TRIM_ROLL" value="0"/>
+    <define name="TRIM_PITCH" value="0"/>
+    <define name="TRIM_YAW" value="0"/>
+    <define name="NB_MOTOR" value="6"/>
+    <define name="SCALE" value="256"/>
+    <define name="PITCH_COEF"  value="{ -256, -256,  256,  256 }"/>
+    <define name="ROLL_COEF"   value="{  256, -256,  256, -256 }"/>
+    <define name="YAW_COEF"    value="{  256, -256, -128,  128 }"/>
+    <define name="THRUST_COEF" value="{  256,  256,  256,  256 }"/>
+  </section> -->
+  
   <!-- If you got a caliberation XML document from your IMU supplier, import this in the IMU section -->
 
   <!-- Note that is better to have *no* caliberation file at all, than a one with incorrect caliberation values.
