@@ -35,10 +35,10 @@
     <set servo="LEFT"   value="motor_mixing.commands[2]"/>
     <set servo="RIGHT"  value="motor_mixing.commands[3]"/>
     
-    <set servo="A1" value="motor_mixing.commands[4]"/>
+<!--     <set servo="A1" value="motor_mixing.commands[4]"/>
     <set servo="A2"  value="motor_mixing.commands[5]"/>
     <set servo="B1" value="motor_mixing.commands[6]"/>
-    <set servo="B2"  value="motor_mixing.commands[7]"/>
+    <set servo="B2"  value="motor_mixing.commands[7]"/> -->
 
     <!-- Mode dependent actuator laws for the elevons. The elevons act different in rc attitude flight mode-->
     <!-- First the correct feedback is stored in variables -->
@@ -72,7 +72,7 @@
     <define name="THRUST_COEF" value="{  256,  256,  256,  256 ,  256 , 256 ,  256 ,  256 }"/>
   </section> -->
   
-  <section name="MIXING" prefix="MOTOR_MIXING_">
+<!--   <section name="MIXING" prefix="MOTOR_MIXING_">
     <define name="TRIM_ROLL" value="0"/>
     <define name="TRIM_PITCH" value="0"/>
     <define name="TRIM_YAW" value="0"/>
@@ -82,19 +82,19 @@
     <define name="ROLL_COEF"   value="{  0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 }"/>
     <define name="YAW_COEF"    value="{  0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 }"/>
     <define name="THRUST_COEF" value="{  0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 }"/>
-  </section>
+  </section> -->
 
-<!--   <section name="MIXING" prefix="MOTOR_MIXING_">
+  <section name="MIXING" prefix="MOTOR_MIXING_">
     <define name="TRIM_ROLL" value="0"/>
     <define name="TRIM_PITCH" value="0"/>
     <define name="TRIM_YAW" value="0"/>
-    <define name="NB_MOTOR" value="6"/>
+    <define name="NB_MOTOR" value="4"/>
     <define name="SCALE" value="256"/>
     <define name="PITCH_COEF"  value="{ -256, -256,  256,  256 }"/>
     <define name="ROLL_COEF"   value="{  256, -256,  256, -256 }"/>
     <define name="YAW_COEF"    value="{  256, -256, -128,  128 }"/>
     <define name="THRUST_COEF" value="{  256,  256,  256,  256 }"/>
-  </section> -->
+  </section>
   
   <!-- If you got a caliberation XML document from your IMU supplier, import this in the IMU section -->
 
