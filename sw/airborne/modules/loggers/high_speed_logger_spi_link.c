@@ -24,7 +24,8 @@
 
 #include "subsystems/imu.h"
 #include "mcu_periph/spi.h"
-
+#include "state.h"
+#include "stabilization.h"
 
 struct high_speed_logger_spi_link_data high_speed_logger_spi_link_data;
 struct spi_transaction high_speed_logger_spi_link_transaction;
@@ -56,6 +57,9 @@ void high_speed_logger_spi_link_periodic(void)
 {
   // Static counter to identify missing samples
   static int32_t counter = 0;
+  struct FloatRates* body_rates = stateGetBodyRates_f();
+  struct FloatEulers* euler = stateGetNedToBodyEulers_f();
+  struct NedCoor_f* ned_speed = stateGetSpeedNed_f();
 
   // count all periodic steps
   counter ++;
@@ -65,17 +69,30 @@ void high_speed_logger_spi_link_periodic(void)
     // copy the counter into the SPI datablock
     high_speed_logger_spi_link_data.id = counter;
 
-    high_speed_logger_spi_link_ready = false;
-    high_speed_logger_spi_link_data.gyro_p     = imu.gyro_unscaled.p;
-    high_speed_logger_spi_link_data.gyro_q     = imu.gyro_unscaled.q;
-    high_speed_logger_spi_link_data.gyro_r     = imu.gyro_unscaled.r;
-    high_speed_logger_spi_link_data.acc_x      = imu.accel_unscaled.x;
-    high_speed_logger_spi_link_data.acc_y      = imu.accel_unscaled.y;
-    high_speed_logger_spi_link_data.acc_z      = imu.accel_unscaled.z;
-    high_speed_logger_spi_link_data.mag_x      = imu.mag_unscaled.x;
-    high_speed_logger_spi_link_data.mag_y      = imu.mag_unscaled.y;
-    high_speed_logger_spi_link_data.mag_z      = imu.mag_unscaled.z;
+    // IMU data
+    high_speed_logger_spi_link_data.gyro_p = body_rates->p;
+    high_speed_logger_spi_link_data.gyro_q = body_rates->q;
+    high_speed_logger_spi_link_data.gyro_r = body_rates->r;
+    high_speed_logger_spi_link_data.acc_x = ACCEL_FLOAT_OF_BFP(imu.accel.x);
+    high_speed_logger_spi_link_data.acc_y = ACCEL_FLOAT_OF_BFP(imu.accel.y);
+    high_speed_logger_spi_link_data.acc_z = ACCEL_FLOAT_OF_BFP(imu.accel.z);
 
+    // Attitude Data
+    high_speed_logger_spi_link_data.phi = euler->phi;
+    high_speed_logger_spi_link_data.theta = euler->theta;
+    high_speed_logger_spi_link_data.psi = euler->psi;
+
+    // NED Velocities
+    high_speed_logger_spi_link_data.nedVelX = ned_speed->x;
+    high_speed_logger_spi_link_data.nedVelY = ned_speed->y;
+    high_speed_logger_spi_link_data.nedVelZ = ned_speed->z;
+
+    // Control input
+    high_speed_logger_spi_link_data.rollCmd = stabilization_cmd[COMMAND_ROLL];
+    high_speed_logger_spi_link_data.pitchCmd = stabilization_cmd[COMMAND_PITCH];
+    high_speed_logger_spi_link_data.yawCmd = stabilization_cmd[COMMAND_YAW];
+
+    // Send the data for logging
     spi_submit(&(HIGH_SPEED_LOGGER_SPI_LINK_DEVICE), &high_speed_logger_spi_link_transaction);
   }
 }
