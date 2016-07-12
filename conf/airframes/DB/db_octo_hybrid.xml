@@ -74,6 +74,14 @@
    <define name="ROLL_COEF"   value="{   99, -99,  245, -245 , -110 , 110 , -256 ,  256 }"/>
    <define name="PITCH_COEF"  value="{ -256, -256, 256,  256 ,   40 ,  40 ,  -40 ,  -40 }"/>
    <define name="YAW_COEF"    value="{ -243,  243, 256, -256 , -251 , 251 ,  237 , -237 }"/>
+   
+   Motor-location and naming (top view, x-axis pointing "forward" starting from BACK going towards A1):
+       *LEFT*                       *RIGHT*
+   =========================================
+                 *A2*       *A1*
+       * B2 *                       * B1 *
+   =========================================
+                *FRONT*    *BACK*
    -->
    
   <section name="MIXING" prefix="MOTOR_MIXING_">
