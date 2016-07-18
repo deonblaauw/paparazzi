@@ -6,10 +6,10 @@
 <airframe name="octo_hybrid aspirin 2.1 spektrum">
 	 
   <servos driver="Pwm">
-    <servo name="A1" 			no="3" min="1000" neutral="1100" max="2000"/>
-    <servo name="A2" 			no="4" min="1000" neutral="1100" max="2000"/>
-    <servo name="B1"  			no="2" min="1000" neutral="1100" max="2000"/>
-    <servo name="B2"  			no="5" min="1000" neutral="1100" max="2000"/>
+    <servo name="A1" 			no="3" min="1000" neutral="1100" max="1700"/>
+    <servo name="A2" 			no="4" min="1000" neutral="1100" max="1700"/>
+    <servo name="B1"  			no="2" min="1000" neutral="1100" max="1700"/>
+    <servo name="B2"  			no="5" min="1000" neutral="1100" max="1700"/>
     <servo name="ELEVON_LEFT"  	no="0" min="1000" neutral="1500" max="2000"/>
     <servo name="ELEVON_RIGHT"  no="1" min="1000" neutral="1500" max="2000"/>
   </servos>
