@@ -66,6 +66,9 @@ void high_speed_logger_spi_link_periodic(void)
 
   // only send a new message if the previous was completely sent
   if (high_speed_logger_spi_link_ready) {
+
+    high_speed_logger_spi_link_ready = false;
+
     // copy the counter into the SPI datablock
     high_speed_logger_spi_link_data.id = counter;
 
