@@ -10,16 +10,22 @@
     <servo name="A2" 			no="4" min="1000" neutral="1100" max="1700"/>
     <servo name="B1"  			no="2" min="1000" neutral="1100" max="1700"/>
     <servo name="B2"  			no="5" min="1000" neutral="1100" max="1700"/>
-    <servo name="ELEVON_LEFT"  	no="0" min="1000" neutral="1500" max="2000"/>
-    <servo name="ELEVON_RIGHT"  no="1" min="1000" neutral="1500" max="2000"/>
+    
+    <servo name="FRONT"  			no="0" min="1000" neutral="1100" max="1700"/>
+    <servo name="BACK"  			no="1" min="1000" neutral="1100" max="1700"/>
+    <servo name="LEFT"  			no="6" min="1000" neutral="1100" max="1700"/>
+    <servo name="RIGHT"  			no="7" min="1000" neutral="1100" max="1700"/>
+    
+<!--     <servo name="ELEVON_LEFT"  	no="0" min="1000" neutral="1500" max="2000"/>
+    <servo name="ELEVON_RIGHT"  no="1" min="1000" neutral="1500" max="2000"/> -->
   </servos>
 
-  <servos driver="Asctec_v2_new">
-    <servo name="FRONT"   no="0" min="0" neutral="3" max="200"/>
-    <servo name="BACK"    no="1" min="0" neutral="3" max="200"/>
-    <servo name="LEFT"    no="2" min="0" neutral="3" max="200"/>
-    <servo name="RIGHT"   no="3" min="0" neutral="3" max="200"/>
-  </servos>
+<!--   <servos driver="Asctec_v2_new"> -->
+<!--     <servo name="FRONT"   no="0" min="0" neutral="3" max="200"/> -->
+<!--     <servo name="BACK"    no="1" min="0" neutral="3" max="200"/> -->
+<!--     <servo name="LEFT"    no="2" min="0" neutral="3" max="200"/> -->
+<!--     <servo name="RIGHT"   no="3" min="0" neutral="3" max="200"/> -->
+<!--   </servos> -->
 
   <commands>
     <axis name="PITCH"  failsafe_value="0"/>
@@ -56,8 +62,10 @@
     <let var="forward_right" value="1*$aileron_feedback_right+4*$elevator_feedback_right"/>
 
     <!-- This statement tells the autopilot to use the hover feedback if in mode attitude direct and to use the forward feedback in all other cases-->
+<!--     
     <set servo="ELEVON_LEFT"    value="AP_MODE == AP_MODE_ATTITUDE_DIRECT ? $hover_left  : $forward_left" />
     <set servo="ELEVON_RIGHT"   value="AP_MODE == AP_MODE_ATTITUDE_DIRECT ? $hover_right  : $forward_right" />
+ -->
   </command_laws>
 
 <!--     
@@ -312,6 +320,9 @@
 
   <firmware name="rotorcraft">
     <target name="ap" board="lisa_m_2.0">
+    
+    <define name="USE_SERVOS_7AND8" value="TRUE"/>
+    
       <module name="radio_control" type="spektrum">
         <!-- Put the mode on channel AUX1-->
         <define name="RADIO_KILL_SWITCH" value="5"/>
@@ -332,7 +343,7 @@
     <module name="actuators"     type="pwm">
       <define name="SERVO_HZ" value="400"/>
     </module>
-    <module name="actuators"     type="asctec_v2_new"/>
+<!--     <module name="actuators"     type="asctec_v2_new"/> -->
 
     <module name="telemetry"     type="xbee_api"/>
     <module name="imu"           type="aspirin_v2.2"/>
