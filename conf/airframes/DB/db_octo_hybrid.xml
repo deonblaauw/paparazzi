@@ -46,20 +46,20 @@
     <set servo="B1" value="motor_mixing.commands[6]"/>
     <set servo="B2"  value="motor_mixing.commands[7]"/>
 
-    <!-- Mode dependent actuator laws for the elevons. The elevons act different in rc attitude flight mode-->
-    <!-- First the correct feedback is stored in variables -->
+<!--     Mode dependent actuator laws for the elevons. The elevons act different in rc attitude flight mode
+    First the correct feedback is stored in variables
     <let var="aileron_feedback_left"  value="-@YAW"/>
     <let var="aileron_feedback_right" value="-@YAW"/>
 
     <let var="elevator_feedback_left"  value="+@PITCH"/>
     <let var="elevator_feedback_right" value="-@PITCH"/>
 
-    <!-- Here the gains are defined for the two feedback cases, hover and forward-->
+    Here the gains are defined for the two feedback cases, hover and forward
     <let var="hover_left"  value="3*$aileron_feedback_left"/>
     <let var="hover_right" value="3*$aileron_feedback_right"/>
 
     <let var="forward_left"  value="1*$aileron_feedback_left+4*$elevator_feedback_left"/>
-    <let var="forward_right" value="1*$aileron_feedback_right+4*$elevator_feedback_right"/>
+    <let var="forward_right" value="1*$aileron_feedback_right+4*$elevator_feedback_right"/> -->
 
     <!-- This statement tells the autopilot to use the hover feedback if in mode attitude direct and to use the forward feedback in all other cases-->
 <!--     
